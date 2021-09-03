@@ -11,7 +11,7 @@ do_install() {
   detect_pkgmgr "zypper" && echo "Found Zypper" && zypper_install && return
 }
 
-dpkg_update() {
+dpkg_install() {
 #check for apt-get package manager
  if [ -x "/usr/bin/apt-get" ];
  then
@@ -30,7 +30,7 @@ dpkg_update() {
  fi
 }
 
-yum_update() {
+yum_install() {
 #check for yum packager manager
  if [ -x "/usr/bin/yum" ];
  then
@@ -43,7 +43,7 @@ yum_update() {
  fi
 }
 
-zypper_update() {
+zypper_install() {
 #check for zypper packager manager
  if [ -x "/usr/bin/zypper" ];
  then
@@ -54,7 +54,7 @@ zypper_update() {
  fi
 }
 
-eopkg_update() {
+eopkg_install() {
 #check for eopkg packager manager
  if [ -x "/usr/bin/eopkg" ];
  then
@@ -65,7 +65,7 @@ eopkg_update() {
  fi
 }
 
-pacman_update() {
+pacman_install() {
 #check for pacman packager manager
  if [ -x "/usr/bin/pacman" ];
  then
@@ -75,4 +75,4 @@ pacman_update() {
    echo "'eopkg' package manager not found"
  fi
 }
-do_update
+do_install
