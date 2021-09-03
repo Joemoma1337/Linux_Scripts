@@ -2,16 +2,16 @@ detect_pkgmgr() {
   ls /usr/bin | grep -E "^$*"
 }
 
-do_install() {
+do_update() {
   echo "Detecting Package Manger ... "
 
-  detect_pkgmgr "apt-get" && echo "Found Apt" && apt_install && return
-  detect_pkgmgr "yum" && echo "Found Yum" && yum_install && return
-  detect_pkgmgr "pacman" && echo "Found Pacman" && pacman_install && return
-  detect_pkgmgr "zypper" && echo "Found Zypper" && zypper_install && return
+  detect_pkgmgr "apt-get" && echo "Found Apt" && apt_update && return
+  detect_pkgmgr "yum" && echo "Found Yum" && yum_update && return
+  detect_pkgmgr "pacman" && echo "Found Pacman" && pacman_update && return
+  detect_pkgmgr "zypper" && echo "Found Zypper" && zypper_update && return
 }
 
-apt_install() {
+apt_update() {
 #check for apt-get package manager
  if [ -x "/usr/bin/apt-get" ];
  then
@@ -30,7 +30,7 @@ apt_install() {
  fi
 }
 
-yum_install() {
+yum_update() {
 #check for yum packager manager
  if [ -x "/usr/bin/yum" ];
  then
@@ -43,7 +43,7 @@ yum_install() {
  fi
 }
 
-zypper_install() {
+zypper_update() {
 #check for zypper packager manager
  if [ -x "/usr/bin/zypper" ];
  then
@@ -54,7 +54,7 @@ zypper_install() {
  fi
 }
 
-eopkg_install() {
+eopkg_update() {
 #check for eopkg packager manager
  if [ -x "/usr/bin/eopkg" ];
  then
@@ -65,7 +65,7 @@ eopkg_install() {
  fi
 }
 
-pacman_install() {
+pacman_update() {
 #check for pacman packager manager
  if [ -x "/usr/bin/pacman" ];
  then
@@ -75,4 +75,4 @@ pacman_install() {
    echo "'eopkg' package manager not found"
  fi
 }
-do_install
+do_update
