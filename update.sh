@@ -5,13 +5,13 @@ detect_pkgmgr() {
 do_install() {
   echo "Detecting Package Manger ... "
 
-  detect_pkgmgr "apt" && echo "Found Apt" && apt_install && return
+  detect_pkgmgr "apt-get" && echo "Found Apt" && apt_install && return
   detect_pkgmgr "yum" && echo "Found Yum" && yum_install && return
   detect_pkgmgr "pacman" && echo "Found Pacman" && pacman_install && return
   detect_pkgmgr "zypper" && echo "Found Zypper" && zypper_install && return
 }
 
-dpkg_install() {
+apt_install() {
 #check for apt-get package manager
  if [ -x "/usr/bin/apt-get" ];
  then
