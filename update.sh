@@ -1,3 +1,4 @@
+#!/bin/bash
 detect_pkgmgr() {
   ls /usr/bin | grep -E "^$*"
 }
@@ -47,7 +48,7 @@ zypper_update() {
 #check for zypper packager manager
  if [ -x "/usr/bin/zypper" ];
  then
-   echo "Starting update ..."
+   echo "" && echo "===== Starting update ====="
    zypper --non-interactive update
  else
    echo "'zypper' package manager not found"
@@ -58,7 +59,7 @@ eopkg_update() {
 #check for eopkg packager manager
  if [ -x "/usr/bin/eopkg" ];
  then
-   echo "Starting update ..."
+   echo "" && echo "===== Starting update ====="
    eopkg upgrade -y
  else
    echo "'eopkg' package manager not found"
@@ -69,7 +70,7 @@ pacman_update() {
 #check for pacman packager manager
  if [ -x "/usr/bin/pacman" ];
  then
-   echo "Starting update ..."
+   echo "" && echo "===== Starting update ====="
    yes | pacman -Syu
  else
    echo "'eopkg' package manager not found"
