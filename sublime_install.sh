@@ -9,13 +9,11 @@ apt -y update
 apt -y install sublime-text
 apt -y install -f
 }
-
 yum_install() {
 rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
 yum-config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
 yum -y install sublime-text
 }
-
 zypper_install() {
 rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
 zypper addrepo -g -f https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
