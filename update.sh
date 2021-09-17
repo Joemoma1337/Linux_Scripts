@@ -1,4 +1,14 @@
 #!/bin/bash
+# Ansi color code variables
+r="\e[0;91m"
+b="\e[0;94m"
+b_bg="\e[0;104m${expand_bg}"
+r_bg="\e[0;101m${expand_bg}"
+g_bg="\e[0;102m${expand_bg}"
+g="\e[0;92m"
+white="\e[0;97m"
+u="\e[4m"
+re="\e[0m"
 #check for package manager
 var=$(ls /usr/bin | grep -E "^pacman|^apt|^zypper|^yum|^eopkg" | head -n 1)
 echo "found $var package manager"
@@ -9,10 +19,10 @@ apt_update() {
 	apt -y dist-upgrade
 	echo "" && echo "===== Upgrade ======"
 	apt -y upgrade
-	echo "" && echo "===== Autoremove ======"
-	apt -y autoremove
 	echo "" && echo "===== Fix Dependancies ======"
 	apt -y install -f
+	echo "" && echo "===== Autoremove ======"
+	apt -y autoremove
 }
 yum_update() {
 	echo "" && echo "===== Update ======"
