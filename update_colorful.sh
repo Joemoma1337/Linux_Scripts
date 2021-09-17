@@ -11,35 +11,35 @@ u="\e[4m"
 re="\e[0m"
 #check for package manager
 var=$(ls /usr/bin | grep -E "^pacman|^apt|^zypper|^yum|^eopkg" | head -n 1)
-echo -e "${g}found $var package manager${re}"
+echo "found $var package manager"
 apt_update() {
-	echo "" && echo -e "${g}===== Update ======${re}"
+	echo "" && echo "===== Update ======"
 	apt -y update
-	echo "" && echo -e "${g}===== Dist-Upgrade =====${re}"
+	echo "" && echo "===== Dist-Upgrade ====="
 	apt -y dist-upgrade
-	echo "" && echo -e "${g}===== Upgrade ======${re}"
+	echo "" && echo "===== Upgrade ======"
 	apt -y upgrade
-	echo "" && echo -e "${g}===== Autoremove ======${re}"
-	apt -y autoremove
-	echo "" && echo -e "${g}===== Fix Dependancies ======${re}"
+	echo "" && echo "===== Fix Dependancies ======"
 	apt -y install -f
+	echo "" && echo "===== Autoremove ======"
+	apt -y autoremove
 }
 yum_update() {
-	echo "" && echo -e "${g}===== Update ======${re}"
+	echo "" && echo "===== Update ======"
 	yum update -y
-	echo "" && echo -e "${g}===== upgrade ======${re}"
+	echo "" && echo "===== upgrade ======"
 	yum upgrade -y
 }
 zypper_update() {
-	echo "" && echo -e "${g}===== Starting update =====${re}"
+	echo "" && echo "===== Starting update ====="
 	zypper --non-interactive update
 }
 eopkg_update() {
-	echo "" && echo -e "${g}===== Starting update =====${re}"
+	echo "" && echo "===== Starting update ====="
 	eopkg upgrade -y
 }
 pacman_update() {
-	echo "" && echo -e "${g}===== Starting update =====${re}"
+	echo "" && echo "===== Starting update ====="
 	yes | pacman -Syu
 }
 if [ $var == 'apt' 2>/dev/null ]; then
