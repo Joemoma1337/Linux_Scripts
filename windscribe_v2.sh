@@ -14,48 +14,48 @@ check_cmd() {
 }
 apt_install() {
     if check_cmd apt-get; then
-        echo -e "$===== Signing Key ====="
+        echo "$===== Signing Key ====="
         apt-key adv --keyserver keyserver.ubuntu.com --recv-key FDC247B7
-        echo -e "$===== Repository ====="
+        echo "$===== Repository ====="
         echo 'deb https://repo.windscribe.com/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/windscribe-repo.list
-        echo -e "$===== update ====="
+        echo "$===== update ====="
         apt -y update
-        echo -e "$===== Install ====="
+        echo "$===== Install ====="
         apt-get -y install windscribe-cli
-        echo -e "$===== Fix ====="
+        echo "$===== Fix ====="
         apt -y install -f
         exit
     fi
 }
 yum_install() {
     if check_cmd yum && check_cmd yum-config-manager; then
-        echo -e "$===== Wget ====="
+        echo "$===== Wget ====="
         wget https://repo.windscribe.com/fedora/windscribe.repo -O /etc/yum.repos.d/windscribe.repo
-        echo -e "$===== Update ====="
+        echo "$===== Update ====="
         yum -y update
-        echo -e "$===== Install ====="
+        echo "$===== Install ====="
         yum -y install windscribe-cli
         exit
     fi
 }
 pacman_install() {
     if check_cmd pacman; then
-        echo -e "Pacman detected, unable to install"
-        echo -e "check Windscribe support"
+        echo "Pacman detected, unable to install"
+        echo "check Windscribe support"
         exit
     fi
 }
 zypper_install() {
     if check_cmd zypper; then
-        echo -e "Zypper detected, unable to install"
-        echo -e "check Windscribe support"
+        echo "Zypper detected, unable to install"
+        echo "check Windscribe support"
         exit
     fi
 }
 eopkg_install() {
     if check_cmd eopkg; then
-        echo "" && echo "===== Starting update ====="
-        eopkg upgrade -y
+        echo "" && echo "Eopkg detected, unable to install"
+        echo "" && echo "check Windscribe support"
         exit
     fi
 }
