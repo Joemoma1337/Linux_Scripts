@@ -16,22 +16,23 @@ install_apt() {
       wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add -
       apt -y install apt-transport-https
       echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list
-      apt -y update
-      apt -y install sublime-text
-      apt -y install -f
+      echo "===== update =====" && apt -y update
+      echo "===== Install =====" && apt -y install sublime-text
+      echo "===== Fix-Broken =====" && apt -y install -f
       exit
     fi
 }
 install_yum() {
     if check_cmd yum && check_cmd yum-config-manager; then
-        rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
-        yum-config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
-        yum -y install sublime-text
+        echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+        echo "===== Add-Repo =====" && yum-config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+        echo "===== Install =====" && yum -y install sublime-text
         exit
     fi
 }
 install_pacman() {
     if check_cmd pacman; then
+        echo "===== Curl ====="
         curl -O https://download.sublimetext.com/sublimehq-pub.gpg && pacman-key --add sublimehq-pub.gpg && pacman-key --lsign-key 8A8F901A && rm sublimehq-pub.gpg
         if grep -q 'Server = https://download.sublimetext.com/arch/stable/x86_64' "/etc/pacman.conf";
             then
@@ -39,16 +40,15 @@ install_pacman() {
             else
             echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable/x86_64" | tee -a /etc/pacman.conf
         fi
-        echo "===== update ====="
-        yes | pacman -Syu sublime-text
+        echo "===== Install =====" && yes | pacman -Syu sublime-text
         exit
     fi
 }
 install_zypper() {
     if check_cmd zypper; then
-        rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
-        zypper addrepo -g -f https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
-        zypper install sublime-text
+        echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+        echo "===== Add-Repo =====" && zypper addrepo -g -f https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+        echo "===== Install =====" && zypper install sublime-text
         exit
     fi
 }
