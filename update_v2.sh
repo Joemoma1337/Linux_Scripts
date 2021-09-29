@@ -3,7 +3,6 @@
 SUDO=
 if [ "$(id -u)" -ne 0 ]; then
     SUDO=$(command -v sudo 2> /dev/null)
-
     if [ ! -x "$SUDO" ]; then
         echo "Error: Run this script as root"
         exit 1
@@ -12,23 +11,21 @@ fi
 check_cmd() {
     command -v "$1" 2> /dev/null
 }
-# check for apt-get package manager)
 install_apt() {
     if check_cmd apt-get; then
         echo "" && echo "===== Update ======"
-        #apt -y update
+        apt -y update
         echo "" && echo "===== Dist-Upgrade ====="
-        #apt -y dist-upgrade
+        apt -y dist-upgrade
         echo "" && echo "===== Upgrade ======"
-        #apt -y upgrade
+        apt -y upgrade
         echo "" && echo "===== Fix Dependancies ======"
-        #apt -y install -f
+        apt -y install -f
         echo "" && echo "===== Autoremove ======"
-        #apt -y autoremove
+        apt -y autoremove
         exit
     fi
 }
-# check for yum package manager)
 install_yum() {
     if check_cmd yum && check_cmd yum-config-manager; then
         get_install_opts_for_yum
@@ -39,7 +36,6 @@ install_yum() {
         exit
     fi
 }
-# check for pacman package manager)
 install_pacman() {
     if check_cmd pacman; then
         echo "" && echo "===== Starting update ====="
@@ -47,7 +43,6 @@ install_pacman() {
         exit
     fi
 }
-# check for zypper package manager)
 install_zypper() {
     if check_cmd zypper; then
         echo "" && echo "===== Starting update ====="
@@ -55,7 +50,6 @@ install_zypper() {
         exit
     fi
 }
-# check for zypper package manager)
 install_eopkg() {
     if check_cmd eopkg; then
         echo "" && echo "===== Starting update ====="
@@ -63,13 +57,11 @@ install_eopkg() {
         exit
     fi
 }
-
 install_apt
 install_yum
 install_pacman
 install_zypper
 install_eopkg
-
 # None of the known package managers (apt, yum, pacman, zypper) are available
 echo "Error: Couldn't identify the package manager"
 exit 1
