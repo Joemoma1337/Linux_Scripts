@@ -14,47 +14,37 @@ check_cmd() {
 }
 update_apt() {
     if check_cmd apt-get; then
-        echo "" && echo "===== Update ======"
-        apt -y update
-        echo "" && echo "===== Dist-Upgrade ====="
-        apt -y dist-upgrade
-        echo "" && echo "===== Upgrade ======"
-        apt -y upgrade
-        echo "" && echo "===== Fix Dependancies ======"
-        apt -y install -f
-        echo "" && echo "===== Autoremove ======"
-        apt -y autoremove
+        echo "" && echo "===== Update ======" && apt -y update
+        echo "" && echo "===== Dist-Upgrade =====" && apt -y dist-upgrade
+        echo "" && echo "===== Upgrade ======" && apt -y upgrade
+        echo "" && echo "===== Fix Dependancies ======" && apt -y install -f
+        echo "" && echo "===== Autoremove ======" && apt -y autoremove
         exit
     fi
 }
 update_yum() {
     if check_cmd yum && check_cmd yum-config-manager; then
         get_update_opts_for_yum
-        echo "" && echo "===== Update ======"
-        yum update -y
-        echo "" && echo "===== upgrade ======"
-        yum upgrade -y
+        echo "" && echo "===== Update ======" && yum update -y
+        echo "" && echo "===== upgrade ======" && yum upgrade -y
         exit
     fi
 }
 update_pacman() {
     if check_cmd pacman; then
-        echo "" && echo "===== Starting update ====="
-        yes | pacman -Syu
+        echo "" && echo "===== Starting update =====" && yes | pacman -Syu
         exit
     fi
 }
 update_zypper() {
     if check_cmd zypper; then
-        echo "" && echo "===== Starting update ====="
-        zypper --non-interactive update
+        echo "" && echo "===== Starting update =====" && zypper --non-interactive update
         exit
     fi
 }
 update_eopkg() {
     if check_cmd eopkg; then
-        echo "" && echo "===== Starting update ====="
-        eopkg upgrade -y
+        echo "" && echo "===== Starting update =====" && eopkg upgrade -y
         exit
     fi
 }
