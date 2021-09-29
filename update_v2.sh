@@ -8,6 +8,7 @@ if [ "$(id -u)" -ne 0 ]; then
         exit 1
     fi
 fi
+#check for package mangers
 check_cmd() {
     command -v "$1" 2> /dev/null
 }
