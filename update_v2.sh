@@ -11,7 +11,7 @@ fi
 check_cmd() {
     command -v "$1" 2> /dev/null
 }
-install_apt() {
+update_apt() {
     if check_cmd apt-get; then
         echo "" && echo "===== Update ======"
         apt -y update
@@ -26,9 +26,9 @@ install_apt() {
         exit
     fi
 }
-install_yum() {
+update_yum() {
     if check_cmd yum && check_cmd yum-config-manager; then
-        get_install_opts_for_yum
+        get_update_opts_for_yum
         echo "" && echo "===== Update ======"
         yum update -y
         echo "" && echo "===== upgrade ======"
@@ -36,32 +36,32 @@ install_yum() {
         exit
     fi
 }
-install_pacman() {
+update_pacman() {
     if check_cmd pacman; then
         echo "" && echo "===== Starting update ====="
         yes | pacman -Syu
         exit
     fi
 }
-install_zypper() {
+update_zypper() {
     if check_cmd zypper; then
         echo "" && echo "===== Starting update ====="
         zypper --non-interactive update
         exit
     fi
 }
-install_eopkg() {
+update_eopkg() {
     if check_cmd eopkg; then
         echo "" && echo "===== Starting update ====="
         eopkg upgrade -y
         exit
     fi
 }
-install_apt
-install_yum
-install_pacman
-install_zypper
-install_eopkg
+update_apt
+update_yum
+update_pacman
+update_zypper
+update_eopkg
 # None of the known package managers (apt, yum, pacman, zypper) are available
 echo "Error: Couldn't identify the package manager"
 exit 1
