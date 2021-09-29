@@ -11,7 +11,7 @@ fi
 check_cmd() {
     command -v "$1" 2> /dev/null
 }
-install_apt() {
+ apt_install() {
     if check_cmd apt-get; then
       wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | apt-key add -
       apt -y install apt-transport-https
@@ -22,7 +22,7 @@ install_apt() {
       exit
     fi
 }
-install_yum() {
+yum_install() {
     if check_cmd yum && check_cmd yum-config-manager; then
         echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
         echo "===== Add-Repo =====" && yum-config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
@@ -30,7 +30,7 @@ install_yum() {
         exit
     fi
 }
-install_pacman() {
+pacman_install() {
     if check_cmd pacman; then
         echo "===== Curl ====="
         curl -O https://download.sublimetext.com/sublimehq-pub.gpg && pacman-key --add sublimehq-pub.gpg && pacman-key --lsign-key 8A8F901A && rm sublimehq-pub.gpg
@@ -44,7 +44,7 @@ install_pacman() {
         exit
     fi
 }
-install_zypper() {
+zypper_install() {
     if check_cmd zypper; then
         echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
         echo "===== Add-Repo =====" && zypper addrepo -g -f https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
@@ -52,10 +52,10 @@ install_zypper() {
         exit
     fi
 }
-install_apt
-install_yum
-install_pacman
-install_zypper
+ apt_install
+yum_install
+pacman_install
+zypper_install
 # None of the known package managers (apt, yum, pacman, zypper) are available
 echo "Error: Couldn't identify the package manager"
 exit 1
