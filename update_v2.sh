@@ -55,11 +55,20 @@ install_zypper() {
         exit
     fi
 }
+# check for zypper package manager)
+install_eopkg() {
+    if check_cmd eopkg; then
+        echo "" && echo "===== Starting update ====="
+        eopkg upgrade -y
+        exit
+    fi
+}
 
 install_apt
 install_yum
 install_pacman
 install_zypper
+install_eopkg
 
 # None of the known package managers (apt, yum, pacman, zypper) are available
 echo "Error: Couldn't identify the package manager"
