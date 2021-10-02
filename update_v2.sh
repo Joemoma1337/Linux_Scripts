@@ -42,6 +42,13 @@ update_zypper() {
         exit
     fi
 }
+update_dnf() {
+    if check_cmd zypper; then
+        echo "" && echo "===== Starting update-repo =====" && dnf makecache
+		echo "" && echo "===== Starting update =====" && dnf check-update
+		echo "" && echo "===== Starting upgrade =====" && dnf upgrade
+        exit
+    fi
 update_eopkg() {
     if check_cmd eopkg; then
         echo "" && echo "===== Starting update =====" && eopkg upgrade -y
@@ -52,6 +59,7 @@ update_apt
 update_yum
 update_pacman
 update_zypper
+update_dnf
 update_eopkg
 # None of the known package managers (apt, yum, pacman, zypper) are available
 echo "Error: Couldn't identify the package manager"
