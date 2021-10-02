@@ -22,6 +22,14 @@ check_cmd() {
       exit
     fi
 }
+dnf_install() {
+    if check_cmd dnf; then
+        echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+        echo "===== Add-Repo =====" && dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+        echo "===== Install =====" && dnf install sublime-text
+        exit
+    fi
+}
 yum_install() {
     if check_cmd yum && check_cmd yum-config-manager; then
         echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
@@ -49,14 +57,6 @@ zypper_install() {
         echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
         echo "===== Add-Repo =====" && zypper addrepo -g -f https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
         echo "===== Install =====" && zypper --non-interactive install sublime-text
-        exit
-    fi
-}
-dnf_install() {
-    if check_cmd dnf; then
-        echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
-        echo "===== Add-Repo =====" && dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
-        echo "===== Install =====" && dnf -y install sublime-text
         exit
     fi
 }
