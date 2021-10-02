@@ -32,7 +32,6 @@ update_dnf() {
 }
 update_yum() {
     if check_cmd yum && check_cmd yum-config-manager; then
-        get_update_opts_for_yum
         echo "" && echo "===== Update ======" && yum update -y
         echo "" && echo "===== upgrade ======" && yum upgrade -y
         exit
