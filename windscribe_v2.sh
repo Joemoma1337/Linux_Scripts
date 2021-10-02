@@ -61,6 +61,7 @@ eopkg_install() {
     fi
 }
 apt_install
+dnf_install
 yum_install
 pacman_install
 zypper_install
