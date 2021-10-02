@@ -56,7 +56,7 @@ dnf_install() {
     if check_cmd dnf; then
         echo "===== Import =====" && rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
         echo "===== Add-Repo =====" && dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
-        echo "===== Install =====" && dnf install sublime-text
+        echo "===== Install =====" && dnf -y install sublime-text
         exit
     fi
 }
