@@ -22,6 +22,14 @@ update_apt() {
         exit
     fi
 }
+update_dnf() {
+    if check_cmd dnf; then
+        echo "" && echo "===== Starting update-repo =====" && dnf -y makecache
+		echo "" && echo "===== Starting update =====" && dnf -y check-update
+		echo "" && echo "===== Starting upgrade =====" && dnf -y upgrade
+        exit
+    fi
+}
 update_yum() {
     if check_cmd yum && check_cmd yum-config-manager; then
         get_update_opts_for_yum
@@ -39,14 +47,6 @@ update_pacman() {
 update_zypper() {
     if check_cmd zypper; then
         echo "" && echo "===== Starting update =====" && zypper --non-interactive update
-        exit
-    fi
-}
-update_dnf() {
-    if check_cmd dnf; then
-        echo "" && echo "===== Starting update-repo =====" && dnf -y makecache
-		echo "" && echo "===== Starting update =====" && dnf -y check-update
-		echo "" && echo "===== Starting upgrade =====" && dnf -y upgrade
         exit
     fi
 }
