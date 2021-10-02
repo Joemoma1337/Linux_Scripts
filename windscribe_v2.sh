@@ -14,21 +14,22 @@ check_cmd() {
 }
 apt_install() {
     if check_cmd apt-get; then
-        echo "$===== Signing Key ====="
+        echo "===== Signing Key ====="
         apt-key adv --keyserver keyserver.ubuntu.com --recv-key FDC247B7
-        echo "$===== Repository ====="
+        echo "===== Repository ====="
         echo 'deb https://repo.windscribe.com/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/windscribe-repo.list
-        echo "$===== update =====" && apt -y update
-        echo "$===== Install =====" && apt-get -y install windscribe-cli
-        echo "$===== Fix =====" && apt -y install -f
+        echo "===== update =====" && apt -y update
+        echo "===== Install =====" && apt-get -y install windscribe-cli
+        echo "===== Fix =====" && apt -y install -f
         exit
     fi
 }
 yum_install() {
     if check_cmd yum && check_cmd yum-config-manager; then
-        echo "$===== Wget =====" && wget https://repo.windscribe.com/fedora/windscribe.repo -O /etc/yum.repos.d/windscribe.repo
-        echo "$===== Update =====" && yum -y update
-        echo "$===== Install =====" && yum -y install windscribe-cli
+        echo "===== Wget =====" && wget https://repo.windscribe.com/fedora/windscribe.repo -O /etc/yum.repos.d/windscribe.repo
+		echo "===== Add-epel =====" && yum -y install epel-release
+        echo "===== Update =====" && yum -y update
+        echo "===== Install =====" && yum -y install windscribe-cli
         exit
     fi
 }
