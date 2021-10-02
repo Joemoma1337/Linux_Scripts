@@ -43,12 +43,13 @@ update_zypper() {
     fi
 }
 update_dnf() {
-    if check_cmd zypper; then
-        echo "" && echo "===== Starting update-repo =====" && dnf makecache
-		echo "" && echo "===== Starting update =====" && dnf check-update
-		echo "" && echo "===== Starting upgrade =====" && dnf upgrade
+    if check_cmd dnf; then
+        echo "" && echo "===== Starting update-repo =====" && dnf -y makecache
+		echo "" && echo "===== Starting update =====" && dnf -y check-update
+		echo "" && echo "===== Starting upgrade =====" && dnf -y upgrade
         exit
     fi
+}
 update_eopkg() {
     if check_cmd eopkg; then
         echo "" && echo "===== Starting update =====" && eopkg upgrade -y
