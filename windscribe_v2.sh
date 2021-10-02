@@ -36,7 +36,7 @@ yum_install() {
 dnf_install() {
     if check_cmd yum && check_cmd yum-config-manager; then
         echo "===== Wget =====" && wget https://repo.windscribe.com/fedora/windscribe.repo -O /etc/yum.repos.d/windscribe.repo
-		echo "===== Add-epel =====" && dnf -y install epel-release
+	echo "===== Add-epel =====" && dnf -y install epel-release
         echo "===== Update =====" && dnf -y update
         echo "===== Install =====" && dnf -y install windscribe-cli
         exit
