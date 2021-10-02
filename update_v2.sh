@@ -58,9 +58,9 @@ update_eopkg() {
 }
 update_apt
 update_yum
+update_dnf
 update_pacman
 update_zypper
-update_dnf
 update_eopkg
 # None of the known package managers (apt, yum, pacman, zypper) are available
 echo "Error: Couldn't identify the package manager"
