@@ -57,8 +57,8 @@ update_eopkg() {
     fi
 }
 update_apt
-update_yum
 update_dnf
+update_yum
 update_pacman
 update_zypper
 update_eopkg
