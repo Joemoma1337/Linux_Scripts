@@ -25,8 +25,8 @@ update_apt() {
 update_dnf() {
     if check_cmd dnf; then
         echo "" && echo "===== Starting update-repo =====" && dnf -y makecache
-		echo "" && echo "===== Starting update =====" && dnf -y check-update
-		echo "" && echo "===== Starting upgrade =====" && dnf -y upgrade
+	echo "" && echo "===== Starting update =====" && dnf -y check-update
+	echo "" && echo "===== Starting upgrade =====" && dnf -y upgrade
         exit
     fi
 }
