@@ -9,9 +9,7 @@ if grep -q "$sub" <<< "$drive"; then
 	mount=$(lsblk | grep $drive2 | awk '{print $7}')
 	umount $mount
 	sudo wipefs -a $drive'1'
-	echo "sfdisk"
 	echo ';' | sudo sfdisk $drive
-	echo "mkfs"
 	if [[ "$format" == fat32 ]]; then
 		echo y | sudo mkfs.fat $drive'1'
 		sudo fatlabel $drive'1' $name
