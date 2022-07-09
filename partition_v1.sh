@@ -22,6 +22,7 @@ if grep -q "$sub" <<< "$drive"; then
 		echo y | sudo mkfs.ntfs -f $drive'1'
 		sudo ntfslabel $drive'1' $name
 	fi
+	echo ""&&echo "===== Partitioning Complete! ====="
 elif grep -vq "$sub" <<< "$var1"; then
 	:
 fi
