@@ -26,3 +26,6 @@ if grep -q "$sub" <<< "$drive"; then
 elif grep -vq "$sub" <<< "$var1"; then
 	:
 fi
+# if creating Win10 bootable:
+# mount Win10.iso and USB (after partition script)
+# copy contents of Win10.iso to new partition (sda1, sda2, etc)
