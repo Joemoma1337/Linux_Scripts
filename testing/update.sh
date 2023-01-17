@@ -7,7 +7,6 @@ if [ -f /etc/redhat-release ]; then
 elif [ -f /etc/debian_version ]; then
     # Update for Debian-based distributions
         echo "" && echo "===== Update ======" && apt -y update
-        echo "" && echo "===== Dist-Upgrade =====" && apt -y dist-upgrade
         echo "" && echo "===== Upgrade ======" && apt -y upgrade
         echo "" && echo "===== Fix Dependancies ======" && apt -y install -f
         echo "" && echo "===== Autoremove ======" && apt -y autoremove
