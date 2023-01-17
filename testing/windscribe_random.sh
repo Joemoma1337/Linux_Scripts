@@ -3,4 +3,4 @@ array=("Boltzmann" "Vltava" "Jardin" "Wurstchen" "Grafton" "Duomo" "Tulip" "Vist
 
 size=${#array[@]}
 index=$(( $RANDOM % $size ))
-windscribe-cli connect ${array[$index]}
+windscribe-cli connect "${array[$index]}"
