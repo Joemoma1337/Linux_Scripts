@@ -11,7 +11,7 @@ HASH=$(echo -n "$pass" | iconv -f ASCII -t UTF-16LE | openssl dgst -md4 | cut -d
 echo "Exporting user+hashes, please wait..."
 impacket-secretsdump -just-dc LAB/$user@$dc -hashes aad3b435b51404eeaad3b435b51404ee:$HASH > domain_dump.txt
 #Cleanup only users and hashes
-grep ':::' domain_dump.txt > domain_clean.txt
+grep ':::' domain_dump.txt | egrep -v 'Guest|DefaultAccount' > domain_clean.txt
 #Crack hashes
 hashcat -m 1000 -a 0 domain_clean.txt /usr/share/wordlists/rockyou.txt -o hits.txt
 echo "Cracking complete, please see Needs_Reset.txt"
