@@ -1,5 +1,5 @@
 #!/bin/bash
-lsblk | grep sd | lsblk | grep sd | awk '{print $1,$4,$7}'
+lsblk | grep sd | awk '{print $1,$4,$7}'
 echo ""&&echo -n "enter drive (example: /dev/sda1): "&& read drive
 echo -n "what format (example: ext4, fat32, ntfs): "&& read format
 echo -n "enter new drive name (uppercase): "&&read name
