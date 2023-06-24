@@ -1,12 +1,16 @@
 #!/bin/bash
 echo "===== Working Directoy ====="
 #create working directory
-mkdir ~/Ventoy
+if [ -d "Ventoy" ]; then
+	continue 
+else
+	mkdir ~/Ventoy
+fi
 cd Ventoy
 echo "===== DD ====="
 #create ventoy.img
 echo 'What size do you want your ventoy.img to be? (numbers will be interpreted to GB, Ex: "10" would be 10GB)'
-read count
+echo -n "number of GB: " && read count
 dd if=/dev/zero of=ventoy.img bs=1024M count=$count status=progress
 echo "===== Wget ====="
 #download ventoy software
@@ -28,18 +32,22 @@ echo "===== sh ventoy ====="
 sudo sh ventoy-1.0.51/Ventoy2Disk.sh -i /dev/$ventoy_loop
 echo "===== mount ====="
 #mount ventoy.img to directory
-sudo mkdir /media/ventoy
+if [ -d "/media/ventoy" ]; then
+	continue 
+else
+	sudo mkdir /media/ventoy
+fi
 sudo mount "/dev/$ventoy_loop"p1 /media/ventoy
 echo "===== copy ====="
 #copy images
 echo "Full path to directory you wish to trasnsfer ALL files from (ex: /home/ubuntu/Downloads)"
-read iso_dir
+echo -n "/path/to/dir: " && read iso_dir
 sudo cp -v $iso_dir/* /media/ventoy
 
 #Transferring to PiKVM
 echo "===== Transfer ventoy.img to PiKVM ====="
 echo "what is the IP of your PiKVM?"
-read PiKVMIP
+echo -n "IP: " && read PiKVMIP
 echo $PiKVMIP
 echo "===== changing dir to rw ====="
 ssh root@$PiKVMIP "mount -o remount,rw /var/lib/kvmd/msd"
@@ -53,4 +61,4 @@ ssh root@$PiKVMIP "touch /var/lib/kvmd/msd/.__ventoy.img.complete && mount -o re
 echo "===== cleanup ====="
 sudo umount /media/ventoy
 sudo losetup -d /dev/$ventoy_loop
-sudo rm -rf /media/ventoy
+#sudo rm -rf /media/ventoy
