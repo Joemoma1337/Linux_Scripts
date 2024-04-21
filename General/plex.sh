@@ -1,6 +1,5 @@
 #!/bin/bash
 currentinstalled=$(dpkg -s plexmediaserver|grep Version|cut -d ' ' -f2)
-#plexlatestV=$(curl "https://plex.tv/downloads/details/1?build=linux-ubuntu-x86_64&channel=16&distro=ubuntu"|grep 'Release id'|cut -d '"' -f4)
 version=$(curl "https://plex.tv/downloads/details/1?build=linux-ubuntu-x86_64&channel=16&distro=ubuntu"|grep 'Release id'|cut -d '"' -f4)
 latesturl=$(curl "https://plex.tv/downloads/details/1?build=linux-ubuntu-x86_64&channel=16&distro=ubuntu"|grep 'url='|cut -d '"' -f18)
 
