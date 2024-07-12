@@ -1,39 +1,48 @@
 #!/bin/bash
 
-# Prompt for the ventoy.img path
-read -p "===== ventoy.img =====
-Specify path to ventoy.img (ex: /home/ubuntu/Ventoy/ventoy.img): " ventoy_dir
+# Define variables
+VENTOY_IMG="/home/standard/Ventoy/ventoy.img"  # Adjust path to your ventoy.img file
+MOUNT_DIR="/mnt/ventoy"
+#PiKVMIP="192.168.1.100"  # Replace with your PiKVM IP address
 
-# Set up loop device for ventoy.img
-echo "===== losetup ====="
-sudo losetup -f "$ventoy_dir"
-ventoy_loop=$(losetup -j "$ventoy_dir" | awk -F: '{print $1}')
+# Mount ventoy.img to a temporary directory
+echo "===== Mounting ventoy.img ====="
+sudo mkdir -p "$MOUNT_DIR"
 
+# Use losetup to find the loop device associated with ventoy.img
+ventoy_loop=$(sudo losetup -P -f --show "$VENTOY_IMG")
 if [ -z "$ventoy_loop" ]; then
-    echo "Failed to set up loop device"
+    echo "Failed to set up loop device for $VENTOY_IMG"
     exit 1
 fi
 
-# Mount ventoy.img to directory
-echo "===== mount ====="
-mount_dir="/media/ventoy"
-sudo mkdir -p "$mount_dir"
-sudo mount "${ventoy_loop}p1" "$mount_dir"
+# Check the partitions available
+lsblk "$ventoy_loop"
 
-if ! mountpoint -q "$mount_dir"; then
-    echo "Failed to mount ${ventoy_loop}p1 to $mount_dir"
+# Mount the first partition of the ventoy.img
+sudo mount "${ventoy_loop}p1" "$MOUNT_DIR"
+
+if ! mountpoint -q "$MOUNT_DIR"; then
+    echo "Failed to mount ${ventoy_loop}p1 to $MOUNT_DIR"
     sudo losetup -d "$ventoy_loop"
     exit 1
 fi
 
-# Prompt for the directory to copy files from
-read -p "===== copy =====
-Full path to directory you wish to transfer ALL files from (ex: /home/ubuntu/Downloads): " iso_dir
+# Copy new files into ventoy.img
+echo "===== Copying new files ====="
+read -p 'Full path to directory containing new files (ex: /path/to/new/files): ' new_files_dir
 
-# Copy files
-sudo cp -v "$iso_dir"/* "$mount_dir"
+sudo cp -rv "$new_files_dir"/* "$MOUNT_DIR"
 
-# Cleanup
-echo "===== cleanup ====="
-sudo umount "$mount_dir"
+# Unmount ventoy.img
+echo "===== Unmounting ventoy.img ====="
+sudo umount "$MOUNT_DIR"
+
+# Clean up loop device
 sudo losetup -d "$ventoy_loop"
+
+# Transfer updated ventoy.img to PiKVM
+echo "===== Transferring ventoy.img to PiKVM ====="
+#scp -v "$VENTOY_IMG" standard@"$PiKVMIP":/home/standard
+
+echo "Script completed successfully"
