@@ -1,10 +1,10 @@
-#sudo apt install gnome-screenshot
-import pyautogui
 #sudo apt-get update
-#sudo apt-get install python3-tk python3-dev
+#sudo apt-get install python3-tk python3-dev wmctrl gnome-screenshot
 #pip3 install pyautogui
-import subprocess
 #pip3 install screeninfo
+#pip3 install opencv-python-headless
+import pyautogui
+import subprocess
 from screeninfo import get_monitors
 import threading
 
@@ -64,7 +64,7 @@ def check_for_video_icon():
     while True:
         try:
             pyautogui.sleep(0.1)
-            image_location1 = pyautogui.locateOnScreen('video_icon.png', confidence=0.9)
+            image_location1 = pyautogui.locateOnScreen('CBT_ending_logo.png', confidence=0.9)
             if image_location1:
                 print(image_location1)
                 print("video_icon found")
@@ -95,7 +95,7 @@ def check_for_video_icon():
             try:
                 pyautogui.sleep(0.1)
                 print(e)
-                image_location2 = pyautogui.locateOnScreen('section_quiz.png', confidence=0.9)
+                image_location2 = pyautogui.locateOnScreen('Next_Video.png', confidence=0.9)
                 if image_location2:
                     print("section_quiz found")
                     pyautogui.click(l_mon.x + 1600, l_mon.y + 120)
