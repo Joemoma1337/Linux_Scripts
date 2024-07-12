@@ -52,7 +52,7 @@ echo $PiKVMIP
 echo "===== changing dir to rw ====="
 ssh root@$PiKVMIP "mount -o remount,rw /var/lib/kvmd/msd"
 echo "===== transferring ventoy.img ====="
-scp ventoy.img root@$PiKVMIP:/var/lib/kvmd/msd
+scp -v ventoy.img root@$PiKVMIP:/var/lib/kvmd/msd
 echo "===== create complete file && changing dir to ro ====="
 ssh root@$PiKVMIP "touch /var/lib/kvmd/msd/.__ventoy.img.complete && mount -o remount,ro /var/lib/kvmd/msd"
 #echo "===== changing dir to ro ====="
