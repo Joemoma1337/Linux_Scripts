@@ -1,9 +1,17 @@
 #!/bin/bash
 
-# Define variables
-VENTOY_IMG="/home/standard/Ventoy/ventoy.img"  # Adjust path to your ventoy.img file
+# Prompt for ventoy.img file path
+read -p "Specify path to ventoy.img (e.g., /home/standard/Ventoy/ventoy.img): " VENTOY_IMG
+if [ ! -f "$VENTOY_IMG" ]; then
+    echo "Error: File '$VENTOY_IMG' not found."
+    exit 1
+fi
+
+# Prompt for PiKVM IP address
+read -p "Enter the IP address of your PiKVM: " PiKVMIP
+
+# Define mount directory
 MOUNT_DIR="/mnt/ventoy"
-#PiKVMIP="192.168.1.100"  # Replace with your PiKVM IP address
 
 # Mount ventoy.img to a temporary directory
 echo "===== Mounting ventoy.img ====="
