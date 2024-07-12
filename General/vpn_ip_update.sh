@@ -1,10 +1,18 @@
 #!/bin/bash
-newIPvar=$(curl -4 https://ifconfig.me/ip)
 
-#OpenVPN
-oldIPvar=$(cat /etc/openvpn/easy-rsa/pki/Default.txt|grep 'remote '|cut -d ' ' -f2)
-sed -i "s/$oldIPvar/$newIPvar/g" /etc/openvpn/easy-rsa/pki/Default.txt
+# Get the current public IP address
+readonly NEW_IP=$(curl -4 -s https://ifconfig.me/ip)
 
-#Wireguard
-oldIPvar=$(cat /etc/pivpn/wireguard/setupVars.conf|grep pivpnHOST|cut -d '=' -f2)
-sed -i "s/$oldIPvar/$newIPvar/g" /etc/pivpn/wireguard/setupVars.conf
+# OpenVPN
+readonly OPENVPN_FILE="/etc/openvpn/easy-rsa/pki/Default.txt"
+if [[ -f $OPENVPN_FILE ]]; then
+    OLD_IP=$(awk '/remote / {print $2}' $OPENVPN_FILE)
+    sed -i "s/$OLD_IP/$NEW_IP/g" $OPENVPN_FILE
+fi
+
+# Wireguard
+readonly WIREGUARD_FILE="/etc/pivpn/wireguard/setupVars.conf"
+if [[ -f $WIREGUARD_FILE ]]; then
+    OLD_IP=$(awk -F '=' '/pivpnHOST/ {print $2}' $WIREGUARD_FILE)
+    sed -i "s/$OLD_IP/$NEW_IP/g" $WIREGUARD_FILE
+fi
