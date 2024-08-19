@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Directory containing the videos
-input_dir="/mnt/2TB_SSD/Recordings/Need.to.be.Trimmed"
-output_dir="/mnt/2TB_SSD/Recordings/0.Backup"
+input_dir="/Path/To/Source/Need.to.be.Trimmed"
+output_dir="/Path/To/Destination/Backup"
 
 # Create the output directory if it doesn't exist
 #mkdir -p "$output_dir"
