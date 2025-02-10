@@ -2,7 +2,23 @@
 # Define variables
 MODULES_DIR="vmware-host-modules"
 ORIGINAL_DIR="VMWare_host_modules_original"
-VERSION="workstation-17.5.1"
+VERSION=$(vmware -v 2>/dev/null | grep -oP '\d+\.\d+\.\d+')  # Get the installed VMware version
+
+# Check if the VERSION is successfully retrieved
+if [ -z "$VERSION" ]; then
+    echo "Error: VMware Workstation version not found. Exiting."
+    exit 1
+fi
+
+echo "Detected VMware version: $VERSION"
+
+# Check if the original directory exists
+if [ ! -d "$ORIGINAL_DIR" ]; then
+    echo "$ORIGINAL_DIR does not exist. Cloning from Git..."
+    git clone https://github.com/bytium/vm-host-modules.git "$ORIGINAL_DIR" || { echo "Failed to clone $ORIGINAL_DIR. Exiting."; exit 1; }
+else
+    echo "$ORIGINAL_DIR already exists. Skipping download."
+fi
 
 # Remove the existing vmware-host-modules directory (with confirmation)
 if [ -d "$MODULES_DIR" ]; then
@@ -11,13 +27,8 @@ if [ -d "$MODULES_DIR" ]; then
 fi
 
 # Copy the original modules directory
-if [ -d "$ORIGINAL_DIR" ]; then
-    echo "Copying $ORIGINAL_DIR to $MODULES_DIR..."
-    cp -r "$ORIGINAL_DIR/" "$MODULES_DIR" || { echo "Failed to copy $ORIGINAL_DIR. Exiting."; exit 1; }
-else
-    echo "Error: $ORIGINAL_DIR does not exist. Exiting."
-    exit 1
-fi
+echo "Copying $ORIGINAL_DIR to $MODULES_DIR..."
+cp -r "$ORIGINAL_DIR/" "$MODULES_DIR" || { echo "Failed to copy $ORIGINAL_DIR. Exiting."; exit 1; }
 
 # Navigate to the vmware-host-modules directory
 cd "$MODULES_DIR" || { echo "Failed to change to $MODULES_DIR. Exiting."; exit 1; }
