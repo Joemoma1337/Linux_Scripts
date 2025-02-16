@@ -27,6 +27,14 @@ update_debian() {
 update_arch() {
     echo "===== Arch Linux-based Update =====" | tee -a "$LOG_FILE"
     yes | pacman -Syu | tee -a "$LOG_FILE"
+    
+    # Check if yay is installed and update AUR packages if it exists
+    if command -v yay &> /dev/null; then
+        echo "===== Updating AUR Packages with Yay =====" | tee -a "$LOG_FILE"
+        yay -Syu --noconfirm | tee -a "$LOG_FILE"
+    else
+        echo "Yay is not installed. Skipping AUR package updates." | tee -a "$LOG_FILE"
+    fi
 }
 # Function to update SUSE-based distributions
 update_suse() {
