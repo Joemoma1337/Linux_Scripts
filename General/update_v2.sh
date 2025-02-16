@@ -27,11 +27,16 @@ update_debian() {
 update_arch() {
     echo "===== Arch Linux-based Update =====" | tee -a "$LOG_FILE"
     yes | pacman -Syu | tee -a "$LOG_FILE"
-    
-    # Check if yay is installed and update AUR packages if it exists
+
+    # Check if yay is installed
     if command -v yay &> /dev/null; then
         echo "===== Updating AUR Packages with Yay =====" | tee -a "$LOG_FILE"
-        yay -Syu --noconfirm | tee -a "$LOG_FILE"
+
+        # Get the non-root user running the script
+        USERNAME=$(logname)
+
+        # Run yay as the non-root user
+        sudo -u "$USERNAME" yay -Syu --noconfirm | tee -a "$LOG_FILE"
     else
         echo "Yay is not installed. Skipping AUR package updates." | tee -a "$LOG_FILE"
     fi
