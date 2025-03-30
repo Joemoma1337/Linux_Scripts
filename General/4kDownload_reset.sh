@@ -3,7 +3,7 @@ set -e  # Exit immediately if a command fails
 
 # Define variables
 APP_NAME="4kvideodownloaderplus"
-BACKUP_DIR="/home/standard/Videos/backup"
+BACKUP_DIR="/home/USER/Videos/backup"
 VIDEO_DIR="/home/USER/Videos/4K Video Downloader+"
 DOWNLOAD_PATH="/home/USER/Downloads/4kdl.deb"
 
