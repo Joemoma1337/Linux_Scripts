@@ -7,7 +7,7 @@ import pyautogui
 import time
 import math
 
-image_path = "clip2.png"
+image_path = "clip2.png" # update this for your screenshot matching
 region = (0, 0, 1920, 1080)  # Adjust for your left monitor
 max_empty_cycles = 2
 empty_cycle_count = 0
