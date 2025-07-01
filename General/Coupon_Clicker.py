@@ -1,47 +1,81 @@
 #python3 -m venv /path/to/dir
 #source /path/to/dir/bin/activate
-#pip install pyautogui opencv-python
+#pip install pyautogui opencv-python mss numpy
 #sudo apt-get install python3-tk python3-dev gnome-screenshot
 
+import cv2
+import numpy as np
 import pyautogui
+import mss
 import time
-import math
 
-image_path = "clip2.png" # update this for your screenshot matching
-region = (0, 0, 1920, 1080)  # Adjust for your left monitor
-max_empty_cycles = 2
-empty_cycle_count = 0
+# Load the template image
+template_path = "clip.png"
+template = cv2.imread(template_path, cv2.IMREAD_UNCHANGED)
+template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+w, h = template_gray.shape[::-1]
+threshold = 0.7  # Match confidence threshold
 
-def is_close(p1, p2, threshold=10):
-    return math.hypot(p1[0] - p2[0], p1[1] - p2[1]) < threshold
+def find_unique_matches(screenshot, monitor):
+    gray_img = cv2.cvtColor(screenshot, cv2.COLOR_BGR2GRAY)
+    result = cv2.matchTemplate(gray_img, template_gray, cv2.TM_CCOEFF_NORMED)
+    locations = np.where(result >= threshold)
+    points = list(zip(*locations[::-1]))
 
-def deduplicate_centers(centers, threshold=10):
-    deduped = []
-    for c in centers:
-        if not any(is_close(c, d, threshold) for d in deduped):
-            deduped.append(c)
-    return deduped
+    # Deduplicate close matches
+    unique_points = []
+    for pt in points:
+        if not any(np.linalg.norm(np.array(pt) - np.array(up)) < 10 for up in unique_points):
+            unique_points.append(pt)
 
-print("You have 3 seconds to switch to the target window...")
-time.sleep(3)
+    # Sort bottom to top
+    unique_points.sort(key=lambda p: p[1], reverse=True)
 
-while empty_cycle_count < max_empty_cycles:
-    matches = list(pyautogui.locateAllOnScreen(image_path, confidence=0.80, region=region))
-    centers = [pyautogui.center(match) for match in matches]
-    unique_centers = deduplicate_centers(centers)
+    # Convert to screen coordinates
+    screen_points = [
+        (monitor["left"] + pt[0] + w // 2, monitor["top"] + pt[1] + h // 2)
+        for pt in unique_points
+    ]
+    return screen_points
 
-    if unique_centers:
-        empty_cycle_count = 0
-        unique_centers.sort(key=lambda c: c[1], reverse=True)  # Bottom to top
-        for center in unique_centers:
-            pyautogui.moveTo(center)
-            pyautogui.click()
-            time.sleep(0.1)
-    else:
-        empty_cycle_count += 1
-        print(f"No matches found (empty cycle {empty_cycle_count}/{max_empty_cycles})")
+# Setup monitor
+with mss.mss() as sct:
+    monitor = sct.monitors[2]  # Left monitor
+    print(f"Using monitor: {monitor}")
 
-    pyautogui.press("pagedown")
-    time.sleep(1)  # Optional: wait a bit for new content to load
+    while True:
+        found_any = False
 
-print("No matches after 2 cycles. Exiting.")
+        # First pass
+        screenshot = np.array(sct.grab(monitor))
+        matches = find_unique_matches(screenshot, monitor)
+        if matches:
+            found_any = True
+            for x, y in matches:
+                pyautogui.moveTo(x, y)
+                pyautogui.click()
+                time.sleep(0.1)
+        else:
+            print("No matches on first scan.")
+
+        # Page down
+        pyautogui.press("pagedown")
+        time.sleep(1)
+
+        # Second pass
+        screenshot = np.array(sct.grab(monitor))
+        matches = find_unique_matches(screenshot, monitor)
+        if matches:
+            found_any = True
+            for x, y in matches:
+                pyautogui.moveTo(x, y)
+                pyautogui.click()
+                time.sleep(0.1)
+        else:
+            print("No matches after page down.")
+
+        if not found_any:
+            print("No matches in both scans. Exiting.")
+            break
+
+        time.sleep(1)
