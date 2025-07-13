@@ -1,13 +1,15 @@
-#python3 -m venv /path/to/dir
-#source /path/to/dir/bin/activate
-#pip install pyautogui opencv-python mss numpy
-#sudo apt-get install python3-tk python3-dev gnome-screenshot
+# python3 -m venv /path/to/dir
+# source /path/to/dir/bin/activate
+# pip install pyautogui opencv-python mss numpy keyboard
+# sudo apt-get install python3-tk python3-dev gnome-screenshot
 
 import cv2
 import numpy as np
 import pyautogui
 import mss
 import time
+import keyboard
+import threading
 
 # Load the template image
 template_path = "clip.png"
@@ -15,6 +17,17 @@ template = cv2.imread(template_path, cv2.IMREAD_UNCHANGED)
 template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 w, h = template_gray.shape[::-1]
 threshold = 0.7  # Match confidence threshold
+
+stop_script = False
+
+def monitor_shift_key():
+    global stop_script
+    while True:
+        if keyboard.is_pressed("shift"):
+            print("Shift key pressed. Stopping script...")
+            stop_script = True
+            break
+        time.sleep(0.1)
 
 def find_unique_matches(screenshot, monitor):
     gray_img = cv2.cvtColor(screenshot, cv2.COLOR_BGR2GRAY)
@@ -38,43 +51,52 @@ def find_unique_matches(screenshot, monitor):
     ]
     return screen_points
 
+# Start shift-key monitor thread
+threading.Thread(target=monitor_shift_key, daemon=True).start()
+
 # Setup monitor
 with mss.mss() as sct:
     monitor = sct.monitors[2]  # Left monitor
     print(f"Using monitor: {monitor}")
 
-    while True:
+    while not stop_script:
         found_any = False
+        print("Select window")
+        time.sleep(3)
 
-        # First pass
+        # First scan
         screenshot = np.array(sct.grab(monitor))
         matches = find_unique_matches(screenshot, monitor)
         if matches:
             found_any = True
             for x, y in matches:
+                if stop_script: break
                 pyautogui.moveTo(x, y)
                 pyautogui.click()
                 time.sleep(0.1)
         else:
             print("No matches on first scan.")
 
+        if stop_script: break
+
         # Page down
         pyautogui.press("pagedown")
         time.sleep(1)
 
-        # Second pass
+        # Second scan
         screenshot = np.array(sct.grab(monitor))
         matches = find_unique_matches(screenshot, monitor)
         if matches:
             found_any = True
             for x, y in matches:
+                if stop_script: break
                 pyautogui.moveTo(x, y)
                 pyautogui.click()
                 time.sleep(0.1)
         else:
             print("No matches after page down.")
 
-        if not found_any:
+        if not found_any or stop_script:
             print("No matches in both scans. Exiting.")
             break
 
