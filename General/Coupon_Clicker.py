@@ -58,46 +58,25 @@ threading.Thread(target=monitor_shift_key, daemon=True).start()
 with mss.mss() as sct:
     monitor = sct.monitors[2]  # Left monitor
     print(f"Using monitor: {monitor}")
+    print("Select window...")
+    time.sleep(3)
 
     while not stop_script:
-        found_any = False
-        print("Select window")
-        time.sleep(3)
-
-        # First scan
         screenshot = np.array(sct.grab(monitor))
         matches = find_unique_matches(screenshot, monitor)
+
         if matches:
-            found_any = True
+            print(f"Found {len(matches)} match(es)")
             for x, y in matches:
                 if stop_script: break
                 pyautogui.moveTo(x, y)
                 pyautogui.click()
                 time.sleep(0.1)
+
+            if stop_script: break
+
+            pyautogui.press("pagedown")
+            time.sleep(1)
         else:
-            print("No matches on first scan.")
-
-        if stop_script: break
-
-        # Page down
-        pyautogui.press("pagedown")
-        time.sleep(1)
-
-        # Second scan
-        screenshot = np.array(sct.grab(monitor))
-        matches = find_unique_matches(screenshot, monitor)
-        if matches:
-            found_any = True
-            for x, y in matches:
-                if stop_script: break
-                pyautogui.moveTo(x, y)
-                pyautogui.click()
-                time.sleep(0.1)
-        else:
-            print("No matches after page down.")
-
-        if not found_any or stop_script:
-            print("No matches in both scans. Exiting.")
+            print("No more matches found. Exiting.")
             break
-
-        time.sleep(1)
