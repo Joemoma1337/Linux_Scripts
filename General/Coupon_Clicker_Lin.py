@@ -26,7 +26,7 @@ MAX_EMPTY_PASSES = 1
 
 # --- Setup ---
 ewmh = EWMH()
-template = cv2.imread("clip.png", cv2.IMREAD_GRAYSCALE)
+template = cv2.imread("clip.png", cv2.IMREAD_GRAYSCALE) #UPDATE clip.png to the image you're trying to match against
 if template is None:
     print("Error: clip.png not found!")
     exit()
