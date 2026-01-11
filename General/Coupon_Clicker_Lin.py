@@ -63,7 +63,7 @@ def get_monitor_agnostic_win_data():
 # --- Main Logic ---
 monitor, win_obj = get_monitor_agnostic_win_data()
 if not monitor:
-    print("Window not found. Please ensure the BJ's Coupon page is open.")
+    print("Window not found. Please ensure the Coupon page is open.")
     exit()
 
 ewmh.setActiveWindow(win_obj)
