@@ -19,7 +19,7 @@ from pynput import keyboard
 from ewmh import EWMH
 
 # --- Config ---
-MATCH_THRESHOLD = 0.8
+MATCH_THRESHOLD = 0.8 #higher for more exact match, lower for more loose match
 SCROLL_DELAY = 1.0 
 REFRESH_DELAY = 6.0 
 MAX_EMPTY_PASSES = 1 
