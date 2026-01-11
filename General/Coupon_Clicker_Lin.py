@@ -1,5 +1,5 @@
 """
-BJ's Coupon Clipper - Linux Version
+Coupon Clipper - Linux Version
 -----------------------------------
 SYSTEM DEPENDENCIES (Run these first):
 sudo apt-get update
