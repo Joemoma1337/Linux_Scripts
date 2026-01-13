@@ -1,26 +1,18 @@
 #!/bin/bash
 
-# Define the target directory (default is current directory)
 TARGET_DIR="${1:-.}"
 
-echo "Starting hash modification in: $TARGET_DIR"
-echo "------------------------------------------"
-
-# Find .mp4 and .mkv files and append 1 byte to each
-find "$TARGET_DIR" -type f \( -name "*.mp4" -o -name "*.mkv" \) | while read -r file; do
-    # Get current file size
-    size=$(stat -c%s "$file")
+# Find mp4, mkv, and txt files
+find "$TARGET_DIR" -type f \( -name "*.mp4" -o -name "*.mkv" -o -name "*.txt" \) | while read -r file; do
     
-    # Increase size by 1 byte
-    new_size=$((size + 1))
-    
-    # Use truncate to add a null byte at the end
-    if truncate -s "$new_size" "$file"; then
-        echo "Modified: $file"
+    if [[ "$file" == *.txt ]]; then
+        # For text files, just add a space to the end
+        echo -n " " >> "$file"
+        echo "Modified (Text): $file"
     else
-        echo "Error modifying: $file"
+        # For video files, use the truncate method (adds 1 null byte)
+        size=$(stat -c%s "$file")
+        truncate -s $((size + 1)) "$file"
+        echo "Modified (Video): $file"
     fi
 done
-
-echo "------------------------------------------"
-echo "Done! All file hashes have been changed."
