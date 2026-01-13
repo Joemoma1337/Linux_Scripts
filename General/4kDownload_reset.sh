@@ -1,111 +1,87 @@
 #!/bin/bash
-#
-# V3: Optimized script to back up, fully uninstall, clean, and reinstall
-# the 4K Video Downloader Plus application using precise path removal.
-#
+# Optimized 4K Video Downloader+ Maintenance Script
 
 # --- Script Safety ---
 set -euo pipefail
 
 # --- Configuration ---
-USER_HOME="${HOME}"
-VIDEO_PARENT_DIR=$(xdg-user-dir VIDEOS 2>/dev/null || echo "${USER_HOME}/Videos")
-
 readonly APP_NAME="4kvideodownloaderplus"
 readonly APP_DISPLAY_NAME="4K Video Downloader+"
-readonly VIDEO_DIR="${VIDEO_PARENT_DIR}/${APP_DISPLAY_NAME}"
-readonly BACKUP_DIR="${VIDEO_PARENT_DIR}/backup_$(date +%Y-%m-%d_%H%M%S)"
-readonly DOWNLOAD_PATH="${USER_HOME}/Downloads/4kdl.deb"
+readonly DOWNLOAD_PATH="${HOME}/Downloads/4kdl.deb"
+
+# Standard XDG Paths
+readonly VIDEO_DIR="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")/${APP_DISPLAY_NAME}"
+readonly BACKUP_DIR="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")/backup_$(date +%Y%m%d_%H%M%S)"
 
 # --- Helper Functions ---
-log_info() {
-    echo "[INFO] $1"
+log_info() { echo -e "\033[0;32m[INFO]\033[0m $1"; }
+log_warn() { echo -e "\033[0;33m[WARN]\033[0m $1"; }
+log_error() { echo -e "\033[0;31m[ERROR]\033[0m $1"; exit 1; }
+
+# Check for root at start to prevent mid-script password prompts
+check_privileges() {
+    if ! sudo -v; then
+        log_error "This script requires sudo privileges to uninstall/reinstall software."
+    fi
 }
 
-log_warn() {
-    echo "[WARN] $1"
-}
-
-# --- Main Functions ---
+# --- Process Logic ---
 
 kill_app() {
-    log_info "Checking for running instances of '$APP_DISPLAY_NAME'..."
-    if pgrep -fi "$APP_NAME" > /dev/null; then
-        pkill -fi "$APP_NAME"
-        log_info "Stopped running application processes."
-    else
-        log_info "Application is not running."
-    fi
+    log_info "Stopping instances of '$APP_NAME'..."
+    # killall is more direct; || true prevents script exit if process not found
+    killall -q "$APP_NAME" || true
 }
 
 backup_data() {
-    log_info "Checking for files to back up in '$VIDEO_DIR'..."
-    if [ -d "$VIDEO_DIR" ] && find "$VIDEO_DIR" -mindepth 1 -print -quit | grep -q .; then
-        log_info "Backup directory will be: $BACKUP_DIR"
-        mkdir -p "$BACKUP_DIR"
-        mv -v "$VIDEO_DIR"/* "$BACKUP_DIR"/
-        log_info "Backup completed."
+    if [ -d "$VIDEO_DIR" ]; then
+        log_info "Backing up data to $BACKUP_DIR..."
+        # Rename the whole directory - much faster than moving contents
+        mv "$VIDEO_DIR" "$BACKUP_DIR"
     else
-        log_info "No files found to back up."
+        log_info "No data directory found to back up."
     fi
 }
 
-uninstall_app() {
-    log_info "Checking if '$APP_NAME' is installed..."
-    if dpkg-query -W -f='${Status}' "$APP_NAME" 2>/dev/null | grep -q "ok installed"; then
-        log_info "Uninstalling and purging '$APP_NAME'..."
+uninstall_and_clean() {
+    log_info "Purging $APP_NAME and removing configuration..."
+    
+    # Check installation status using a faster silent check
+    if dpkg -s "$APP_NAME" &>/dev/null; then
         sudo apt-get purge -y "$APP_NAME"
-        log_info "Application purged successfully."
-    else
-        log_info "Application is not installed."
     fi
-}
 
-cleanup_leftover_files() {
-    log_info "Removing known application directories (cache, config, data)..."
-
-    # Define a list of specific paths to remove.
-    # This is much safer and faster than searching the filesystem.
-    readonly LEFTOVER_PATHS=(
-        "${USER_HOME}/.local/share/4kdownload.com"
-        "${USER_HOME}/.cache/4kdownload.com"
-        "${USER_HOME}/.config/4kdownload.com"
+    # Leftover paths (using XDG variables where possible)
+    local leftover_paths=(
+        "${HOME}/.local/share/4kdownload.com"
+        "${HOME}/.cache/4kdownload.com"
+        "${HOME}/.config/4kdownload.com"
     )
 
-    for path in "${LEFTOVER_PATHS[@]}"; do
-        # Check if the file or directory actually exists before trying to remove it.
-        if [ -e "$path" ]; then
-            log_warn "Found leftover at: $path"
-            # Use 'rm -rfi' to prompt for confirmation. THIS IS THE SAFEST OPTION.
+    for path in "${leftover_paths[@]}"; do
+        if [ -d "$path" ]; then
+            log_warn "Removing leftover: $path"
             rm -rf "$path"
-        else
-            log_info "Path not found (already clean): $path"
         fi
     done
-
-    log_info "Known leftover file cleanup finished."
 }
 
 reinstall_app() {
-    log_info "Attempting to reinstall from '$DOWNLOAD_PATH'..."
     if [ -f "$DOWNLOAD_PATH" ]; then
-        sudo dpkg -i "$DOWNLOAD_PATH"
-        log_info "Installation finished. Now fixing any broken dependencies..."
-        sudo apt-get install --fix-broken -y
-        log_info "Application reinstalled and dependencies fixed."
+        log_info "Installing from $DOWNLOAD_PATH..."
+        # Using apt install on a local file handles dependencies automatically
+        sudo apt-get install -y "$DOWNLOAD_PATH"
     else
-        log_warn "Installation file not found: $DOWNLOAD_PATH. Cannot reinstall."
+        log_error "Installation file not found: $DOWNLOAD_PATH"
     fi
 }
 
-# --- Main Script Execution ---
+# --- Main Execution ---
 
-log_info "Starting cleanup and reinstall process for '$APP_DISPLAY_NAME'..."
-
+check_privileges
 kill_app
 backup_data
-uninstall_app
-cleanup_leftover_files
+uninstall_and_clean
 reinstall_app
 
-log_info "Process completed."
+log_info "Process successfully completed."
