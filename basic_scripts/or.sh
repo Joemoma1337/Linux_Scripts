@@ -1,11 +1,6 @@
-#!/bin/bash
-#The OR operator is another crucial construct that allows us to implement complex, robust programming logic in our scripts. Contrary to AND, a statement consisting of the OR operator returns true when either one of its operands is true. It returns false only when each operand separated by the OR is false
-echo -n "Enter any number:"
-read n
+Description
 
-if [[ ( $n -eq 15 || $n -eq 45 ) ]]
-then
-echo "You won"
-else
-echo "You lost!"
-fi
+The OR operator (represented as ||) allows a script to proceed if at least one of multiple conditions is met. Unlike the AND operator, which requires everything to be perfect, the OR operator returns True if any single part of the expression is true.
+
+Think of it like a guest list: you can get into the party if you have an invitation OR if you are on the VIP list.
+![alt text](https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcR5fa93Vc0b8H694ugTj7x_9eRrCAIROkkRjOZH1tc1a2udu7ah5SzVI0YgjDmRLEikbnTRi02ETauyGwNNIeczXIqBMf6P8PYOuqYFoUaLti33Dao "Logic Gates with Truth Tables")
