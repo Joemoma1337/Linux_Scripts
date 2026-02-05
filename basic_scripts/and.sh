@@ -4,6 +4,7 @@ For the entire statement to be considered True, every individual condition must 
 If even one part is false, the whole block fails.
 
 Think of it as a strict security gate: you need both the correct ID card and the correct passcode to enter.
+https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcTc86ZQoBPHbON7nx6LW5iyLI0YSGARp4JSI0VeGmCfyniAMGdznI9uDX9V4QW2Mb7EeOpV5Ar6Y4HJtxpJOZrWIuSVWnF_s03Dr2PigmBqLAAx3aM
 
 Example Usage
 In this example, we check if a number is "Small and Even." To pass, the number must be less than 10 AND divisible by 2.
