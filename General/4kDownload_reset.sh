@@ -5,13 +5,14 @@
 set -euo pipefail
 
 # --- Configuration ---
+readonly APP_PROCESS="4kvideodownloaderplus-bin"
 readonly APP_NAME="4kvideodownloaderplus"
 readonly APP_DISPLAY_NAME="4K Video Downloader+"
 readonly DOWNLOAD_PATH="${HOME}/Downloads/4kdl.deb"
 
 # Standard XDG Paths
 readonly VIDEO_DIR="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")/${APP_DISPLAY_NAME}"
-readonly BACKUP_DIR="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")/backup_$(date +%Y%m%d_%H%M%S)"
+readonly BACKUP_DIR="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")/backup_$(date +%Y%m%d)"
 
 # --- Helper Functions ---
 log_info() { echo -e "\033[0;32m[INFO]\033[0m $1"; }
@@ -28,18 +29,24 @@ check_privileges() {
 # --- Process Logic ---
 
 kill_app() {
-    log_info "Stopping instances of '$APP_NAME'..."
+    log_info "Stopping instances of '$APP_PROCESS'..."
     # killall is more direct; || true prevents script exit if process not found
-    killall -q "$APP_NAME" || true
+    killall -q "$APP_PROCESS" || true
 }
 
 backup_data() {
-    if [ -d "$VIDEO_DIR" ]; then
-        log_info "Backing up data to $BACKUP_DIR..."
-        # Rename the whole directory - much faster than moving contents
-        mv "$VIDEO_DIR" "$BACKUP_DIR"
+    if [ -d "$VIDEO_DIR" ] && [ "$(ls -A "$VIDEO_DIR")" ]; then
+        log_info "Moving contents from $VIDEO_DIR to $BACKUP_DIR..."
+        
+        # Create the backup directory if it doesn't exist
+        mkdir -p "$BACKUP_DIR"
+        
+        # Move all contents (files and subfolders)
+        mv "$VIDEO_DIR"/* "$BACKUP_DIR/"
+        
+        log_info "Backup complete."
     else
-        log_info "No data directory found to back up."
+        log_info "No files found in $VIDEO_DIR to back up."
     fi
 }
 
