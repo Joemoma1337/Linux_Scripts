@@ -5,8 +5,8 @@
 set -euo pipefail
 
 # --- Configuration ---
-readonly APP_PROCESS="4kvideodownloaderplus-bin"
 readonly APP_NAME="4kvideodownloaderplus"
+readonly APP_PROCESS="$APP_NAME-bin"
 readonly APP_DISPLAY_NAME="4K Video Downloader+"
 readonly DOWNLOAD_PATH="${HOME}/Downloads/4kdl.deb"
 
