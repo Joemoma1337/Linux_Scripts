@@ -5,10 +5,12 @@
 set -euo pipefail
 
 # --- Configuration ---
+# Change this to the directory containing your .deb files
+readonly DEB_DIR="${HOME}/Downloads"
 readonly APP_NAME="4kvideodownloaderplus"
 readonly APP_PROCESS="$APP_NAME-bin"
 readonly APP_DISPLAY_NAME="4K Video Downloader+"
-readonly DOWNLOAD_PATH="${HOME}/Downloads/4kdl.deb"
+#readonly DOWNLOAD_PATH="${HOME}/Downloads/4kdl.deb"
 
 # Standard XDG Paths
 readonly VIDEO_DIR="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")/${APP_DISPLAY_NAME}"
@@ -74,12 +76,20 @@ uninstall_and_clean() {
 }
 
 reinstall_app() {
-    if [ -f "$DOWNLOAD_PATH" ]; then
-        log_info "Installing from $DOWNLOAD_PATH..."
-        # Using apt install on a local file handles dependencies automatically
-        sudo apt-get install -y "$DOWNLOAD_PATH"
+    log_info "Searching for the latest version of $APP_NAME in $DEB_DIR..."
+
+    # 1. Find all matching .deb files
+    # 2. Sort them by version number (highest at the bottom)
+    # 3. Take the last (newest) one
+    local latest_deb
+    latest_deb=$(ls "$DEB_DIR"/${APP_NAME}_*_amd64.deb 2>/dev/null | sort -V | tail -n 1)
+
+    if [ -n "$latest_deb" ] && [ -f "$latest_deb" ]; then
+        log_info "Latest version found: $(basename "$latest_deb")"
+        log_info "Installing..."
+        sudo apt-get install -y "$latest_deb"
     else
-        log_error "Installation file not found: $DOWNLOAD_PATH"
+        log_error "No installation files matching ${APP_NAME}_*_amd64.deb found in $DEB_DIR"
     fi
 }
 
