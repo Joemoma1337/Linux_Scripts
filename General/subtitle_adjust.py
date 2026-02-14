@@ -1,52 +1,65 @@
+import sys
 import re
 from datetime import timedelta, datetime
 from charset_normalizer import detect
 from pathlib import Path
 
 def adjust_timestamp(timestamp, delta):
-    """Adjust a single timestamp by a time delta."""
+    """Adjust a single timestamp with a floor at 00:00:00."""
     timestamp_format = "%H:%M:%S,%f"
     time_obj = datetime.strptime(timestamp, timestamp_format)
-    adjusted_time = time_obj + delta
-    return adjusted_time.strftime(timestamp_format)[:-3]  # Format back to SRT style
+    
+    # Calculate new time
+    new_time = time_obj + delta
+    
+    # Ensure we don't go into negative time
+    zero_time = datetime.strptime("00:00:00,000", timestamp_format)
+    if new_time < zero_time:
+        return "00:00:00,000"
+    
+    return new_time.strftime(timestamp_format)[:-3]
 
-def adjust_srt_file(input_file, output_file, time_adjustment):
-    """Adjust timestamps in an SRT file."""
-    delta = timedelta(seconds=time_adjustment)
+def process_srt(input_path, adjustment_seconds):
+    path = Path(input_path)
+    
+    if not path.exists():
+        print(f"Error: File '{input_path}' not found.")
+        return
+
+    # Detect encoding
+    raw_data = path.read_bytes()
+    detection = detect(raw_data)
+    encoding = detection["encoding"] or "utf-8"
+    
+    # Prepare output filename (e.g., movie.srt -> movie_adjusted.srt)
+    output_path = path.with_name(f"{path.stem}_adjusted{path.suffix}")
+    
+    delta = timedelta(seconds=adjustment_seconds)
     timestamp_pattern = re.compile(r"(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})")
     
-    # Detect the file's encoding
-    with open(input_file, "rb") as f:
-        raw_data = f.read()
-    encoding = detect(raw_data)["encoding"]
-    
-    if not encoding:
-        raise ValueError("Could not detect the file's encoding.")
+    lines = raw_data.decode(encoding).splitlines()
+    adjusted_lines = []
 
-    # Decode the file with the detected encoding
-    decoded_data = raw_data.decode(encoding)
-    
-    # Process and adjust the timestamps
-    with open(output_file, "w", encoding="utf-8") as outfile:
-        for line in decoded_data.splitlines():
-            match = timestamp_pattern.search(line)
-            if match:
-                start_time, end_time = match.groups()
-                new_start_time = adjust_timestamp(start_time, delta)
-                new_end_time = adjust_timestamp(end_time, delta)
-                outfile.write(f"{new_start_time} --> {new_end_time}\n")
-            else:
-                outfile.write(line + "\n")
+    for line in lines:
+        match = timestamp_pattern.search(line)
+        if match:
+            start, end = match.groups()
+            adjusted_lines.append(f"{adjust_timestamp(start, delta)} --> {adjust_timestamp(end, delta)}")
+        else:
+            adjusted_lines.append(line)
 
-# Example usage
-Dir = Path("/path/to/folder")
-input_file = Dir / "original.srt"
-output_file = Dir / "new.output.srt"
-time_adjustment = 14
-adjust_srt_file(input_file, output_file, time_adjustment)
+    output_path.write_text("\n".join(adjusted_lines), encoding="utf-8")
+    print(f"Success! Adjusted file saved to: {output_path}")
 
-
-
-
-
-
+if __name__ == "__main__":
+    # Check if user provided arguments: [script.py, file_path, seconds]
+    if len(sys.argv) < 3:
+        print("Usage: python script.py <path_to_srt> <seconds_to_adjust>")
+        print("Example: python script.py movie.srt 1.5")
+    else:
+        file_arg = sys.argv[1]
+        try:
+            time_arg = float(sys.argv[2])
+            process_srt(file_arg, time_arg)
+        except ValueError:
+            print("Error: The adjustment value must be a number (e.g., 14 or -5.2).")
