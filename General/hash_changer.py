@@ -2,6 +2,9 @@ import os
 import hashlib
 
 # --- CONFIGURATION ---
+#Windows:
+#folder_path = r'C:\Users\YourName\Videos'
+#Linux:
 folder_path = '/home/user/Videos'
 ENABLE_HASHING = False  # Set to True to see hashes, False to just run
 # ---------------------
