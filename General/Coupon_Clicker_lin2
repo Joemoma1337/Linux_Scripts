@@ -1,0 +1,71 @@
+import pyautogui
+import time
+import sys
+
+# This is your emergency brake! Slam mouse to top-left corner (0,0) to stop.
+pyautogui.FAILSAFE = True
+
+def process_page_coupons(target_image, confidence_level=0.8):
+    print("🔍 Scanning screen for coupons...")
+    try:
+        matches = list(pyautogui.locateAllOnScreen(target_image, confidence=confidence_level))
+    except pyautogui.ImageNotFoundException:
+        matches = []
+        
+    if not matches:
+        return 0
+
+    sorted_matches = sorted(
+        matches, 
+        key=lambda box: (box.top + box.height/2, box.left + box.width/2), 
+        reverse=True
+    )
+    
+    clicked_count = 0
+    for box in sorted_matches:
+        # PyAutoGUI checks FAILSAFE right here when moving/clicking
+        center_x = int(box.left + box.width / 2)
+        center_y = int(box.top + box.height / 2)
+        pyautogui.click(center_x, center_y)
+        clicked_count += 1
+        time.sleep(0.1) 
+        
+    return clicked_count
+
+def main():
+    TARGET = "coupon_button.png"
+    CONFIDENCE = 0.8
+    
+    print("🚀 Script starting in 3 seconds... Switch to Chromium!")
+    print("🖱️  Slam your mouse to the TOP-LEFT corner of the screen at any time to ABORT.")
+    time.sleep(3)
+    
+    for cycle in range(1, 4):
+        no_match_streak = 0  
+        page_view = 1
+        
+        while True:
+            coupons_clicked = process_page_coupons(TARGET, CONFIDENCE)
+            if coupons_clicked > 0:
+                no_match_streak = 0  
+            else:
+                no_match_streak += 1
+            
+            if no_match_streak >= 2:
+                return
+
+            pyautogui.press('pagedown')
+            time.sleep(1.0)
+            page_view += 1
+            if page_view > 3: 
+                break
+
+        if cycle < 3:
+            pyautogui.press('f5')
+            time.sleep(5.0)
+
+if __name__ == "__main__":
+    try:
+        main()
+    except pyautogui.FailSafeException:
+        print("\n🛑 Emergency Stop! Mouse safety corner triggered.")
