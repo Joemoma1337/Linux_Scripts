@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 
-def trim_video(input_path, output_path, start_time="00:01:49", end_time="00:22:35"):
+def trim_video(input_path, output_path, start_time="00:01:00", end_time="00:02:00"):
     """Trims an MKV file using output seeking."""
     cmd = [
         "ffmpeg",
